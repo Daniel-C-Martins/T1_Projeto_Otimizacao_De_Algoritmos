@@ -3,19 +3,23 @@ package algoritmo2;
 public class Algoritmo2 {
 
     public static void main(String[] args) {
+        
+        // Definindo a primeira matriz A
         int[][] A = {
                 { 1, 2 },
                 { 2, 3 }
         };
 
+        // Definindo a segunda matriz B
         int[][] B = {
                 { 2, 4 },
                 { 7, 8 }
         };
 
+        // Multiplicando as duas matrizes usando o método multiply
         int[][] result = multiply(A, B);
 
-        // print result
+        // Imprimindo o resultado da multiplicação de matrizes
         for (int i = 0; i < result.length; i++) {
             for (int j = 0; j < result[i].length; j++) {
                 System.out.print(result[i][j] + " ");
@@ -24,17 +28,24 @@ public class Algoritmo2 {
         }
     }
 
-    // Função principal que aplica o algoritmo de multiply
+    /**
+     * Método principal que aplica o algoritmo de multiplicação de matrizes.
+     * Implementa uma abordagem parecida com o algoritmo de Strassen para dividir e conquistar.
+     * @param A Matriz A
+     * @param B Matriz B
+     * @return  Matriz resultante da multiplicação de A por B
+     */
     public static int[][] multiply(int[][] A, int[][] B) {
         int n = A.length;
+
+        // Caso base: se as matrizes forem 1x1, faz a multiplicação diretamente
         if (n == 1) {
-            // Caso base: multiplicação simples de 1x1
             int[][] result = new int[1][1];
             result[0][0] = A[0][0] * B[0][0];
             return result;
         }
 
-        // Divida as matrizes em submatrizes
+        // Divide as matrizes em 4 submatrizes menores
         int newSize = n / 2;
         int[][] A11 = new int[newSize][newSize];
         int[][] A12 = new int[newSize][newSize];
@@ -46,11 +57,11 @@ public class Algoritmo2 {
         int[][] B21 = new int[newSize][newSize];
         int[][] B22 = new int[newSize][newSize];
 
-        // Preencher as submatrizes A e B
+        // Preenche as submatrizes com os valores das matrizes originais
         split(A, A11, A12, A21, A22);
         split(B, B11, B12, B21, B22);
 
-        // Cálculo das 7 multiplicações
+        // Realiza as 7 multiplicações intermediárias (combinação de somas e subtrações)
         int[][] M1 = multiply(add(A11, A22), add(B11, B22));
         int[][] M2 = multiply(add(A21, A22), B11);
         int[][] M3 = multiply(A11, subtract(B12, B22));
@@ -59,20 +70,27 @@ public class Algoritmo2 {
         int[][] M6 = multiply(subtract(A21, A11), add(B11, B12));
         int[][] M7 = multiply(subtract(A12, A22), add(B21, B22));
 
-        // Combinando as submatrizes para formar a matriz resultado
+        // Calcula as submatrizes da matriz resultado
         int[][] C11 = add(subtract(add(M1, M4), M5), M7);
         int[][] C12 = add(M3, M5);
         int[][] C21 = add(M2, M4);
         int[][] C22 = add(subtract(add(M1, M3), M2), M6);
 
-        // Montando a matriz resultado final
+        // Junta as submatrizes para formar a matriz resultado final
         int[][] result = new int[n][n];
         join(C11, C12, C21, C22, result);
 
         return result;
     }
 
-    // Função para dividir uma matriz em 4 submatrizes
+    /**
+     * Método que divide uma matriz em quatro submatrizes iguais.
+     * @param parent Matriz original
+     * @param A11 Parte superior esquerda
+     * @param A12 Parte superior direita
+     * @param A21 Parte inferior esquerda
+     * @param A22 Parte inferior direita
+     */
     public static void split(int[][] parent, int[][] A11, int[][] A12, int[][] A21, int[][] A22) {
         int n = parent.length / 2;
         for (int i = 0; i < n; i++) {
@@ -85,7 +103,14 @@ public class Algoritmo2 {
         }
     }
 
-    // Função para juntar 4 submatrizes em uma matriz
+    /**
+     * Método que junta quatro submatrizes em uma matriz maior.
+     * @param C11 Parte superior esquerda
+     * @param C12 Parte superior direita
+     * @param C21 Parte inferior esquerda
+     * @param C22 Parte inferior direita
+     * @param result Matriz destino que irá armazenar o resultado da junção
+     */
     public static void join(int[][] C11, int[][] C12, int[][] C21, int[][] C22, int[][] result) {
         int n = C11.length;
         for (int i = 0; i < n; i++) {
@@ -98,7 +123,12 @@ public class Algoritmo2 {
         }
     }
 
-    // Função para somar duas matrizes
+    /**
+     * Método que realiza a soma de duas matrizes.
+     * @param A Primeira matriz
+     * @param B Segunda matriz
+     * @return  Matriz resultante da soma
+     */
     public static int[][] add(int[][] A, int[][] B) {
         int n = A.length;
         int[][] result = new int[n][n];
@@ -110,7 +140,12 @@ public class Algoritmo2 {
         return result;
     }
 
-    // Função para subtrair duas matrizes
+    /**
+     * Método que realiza a subtração de duas matrizes.
+     * @param A Primeira matriz
+     * @param B Segunda matriz
+     * @return  Matriz resultante da subtração
+     */
     public static int[][] subtract(int[][] A, int[][] B) {
         int n = A.length;
         int[][] result = new int[n][n];
